@@ -3,10 +3,15 @@
 
 namespace kernel_translator_constants{
     const char* const C_CODE_FILENAME_SUFFIX = "c";
+    const char* const FAKE_HEADER_MACRO = "OPENCLBC_FAKE_HEADER_FOR_LIBTOOLING_";
+    const char* const CODE_TEMPLATE_FILENAME_SUFFIX = "clmt_template";
+    const char* const MUTANT_FILENAME_SUFFIX = "clmt_mutant";
+    const char* const CLCOV_GET_GENERAL_SIZE_FUNCTION_NAME = "ocl_get_general_size";
 }
 
 namespace error_code{
     const int STATUS_OK = 0;
+    const int STATUS_ERR = 254;
     const int TWO_MANY_HOST_FILE_SUPPLIED = 1;
     const int NO_HOST_FILE_SUPPLIED = 2;
     const int REMOVE_KERNEL_FAKE_HEADER_FAILED_KERNEL_DOES_NOT_EXIST = 3;
@@ -35,7 +40,7 @@ namespace operator_type{
     const unsigned int OTHER = 0x0080;
 }
 
-namespace output_color{
+namespace output_colour{
     const char* const KNRM = "\x1B[0m";
     const char* const KRED = "\x1B[31m";
     const char* const KGRN = "\x1B[32m";
@@ -46,8 +51,11 @@ namespace output_color{
     const char* const KWHT = "\x1B[37m";
 }
 
-namespace mutant_type{
-    const unsigned int killed = 0x01;
-    const unsigned int survived = 0x02;
+namespace message_type{
+    const unsigned int STD = 0x001;
+    const unsigned int ERR = 0x002;
+    const unsigned int LOG = 0x003;
+
 }
+
 #endif

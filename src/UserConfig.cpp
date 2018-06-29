@@ -18,8 +18,8 @@ int UserConfig::generateFakeHeader(std::string kernelFileName){
     std::set<std::string> setMacro = this->getValues("macro");
     
     std::stringstream header;
-    header << "#ifndef " << kernel_rewriter_constants::FAKE_HEADER_MACRO << "\n";
-    header << "#define " << kernel_rewriter_constants::FAKE_HEADER_MACRO << "\n";
+    header << "#ifndef " << kernel_translator_constants::FAKE_HEADER_MACRO << "\n";
+    header << "#define " << kernel_translator_constants::FAKE_HEADER_MACRO << "\n";
     header << "#include <opencl-c.h>\n"; // for opencl library calls
     numAddedLines += 3;
 
@@ -61,7 +61,7 @@ int UserConfig::removeFakeHeader(std::string kernelFileName){
     fileReader.open(kernelFileName);
 
     std::string targetLine = "#ifndef ";
-    targetLine.append(kernel_rewriter_constants::FAKE_HEADER_MACRO);
+    targetLine.append(kernel_translator_constants::FAKE_HEADER_MACRO);
     std::string targetLine2 = "#endif";
 
     while(std::getline(fileReader, line)){
@@ -87,7 +87,7 @@ bool UserConfig::hasFakeHeader(std::string kernelFileName){
     std::ifstream kernelFileStream(kernelFileName);
     std::string line;
     std::string targetLine = "#ifndef ";
-    targetLine.append(kernel_rewriter_constants::FAKE_HEADER_MACRO);
+    targetLine.append(kernel_translator_constants::FAKE_HEADER_MACRO);
     while (std::getline(kernelFileStream, line)){
         if (line.find(targetLine) != std::string::npos) {
             return true;
