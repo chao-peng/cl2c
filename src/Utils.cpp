@@ -143,7 +143,7 @@ int CL2CUtils::alert(const std::string& message, const char* const colour, const
 }
 
 int CL2CUtils::alert(const std::stringstream& messagestream, const char* const colour, const int& msg_type){
-    alert(messagestream.str(), colour, msg_type);
+    return alert(messagestream.str(), colour, msg_type);
 }
 
 int CL2CUtils::runCommand(const std::string& command){
