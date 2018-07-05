@@ -58,13 +58,10 @@ bool isKernelFunctionDefinition(Rewriter& r, const FunctionDecl* FD){
 
 // Need to deal with commas after removing parameter definitions
 void removeGlobalParameters(Rewriter& r, const FunctionDecl* FD){
-    std::cout << "0" << std::endl;
     if (FD->getNumParams() == 0) return;
-    std::cout << "00" << std::endl;
     std::string newParameterListStr;
     for (unsigned int i = 0; i < FD->getNumParams(); i++){
         const ParmVarDecl* parmDecl = FD->getParamDecl(i);
-        std::cout << "000" << std::endl;
         if (!isGlobalParmVarDefinition(r, parmDecl)){
             if (newParameterListStr.empty()){
                 newParameterListStr = r.getRewrittenText(parmDecl->getSourceRange());
@@ -73,20 +70,12 @@ void removeGlobalParameters(Rewriter& r, const FunctionDecl* FD){
             }
         }
     }
-    std::cout << "1" << std::endl;
     SourceLocation replaceBegin = FD->getParamDecl(0)->getLocStart();
-    std::cout << "2" << std::endl;
     SourceLocation replaceEnd = FD->getParamDecl(FD->getNumParams() - 1)->getLocEnd();
-    std::cout << "3" << std::endl;
     SourceRange replaceRange;
-    std::cout << "4" << std::endl;
     replaceRange.setBegin(replaceBegin);
-    std::cout << "5" << std::endl;
     replaceRange.setEnd(replaceEnd);
-    std::cout << "6" << std::endl;
     r.ReplaceText(replaceRange, newParameterListStr);
-    std::cout << newParameterListStr << std::endl;
-    std::cout << "7" << std::endl;
 }
 
 auto VarDeclMatcher = 
@@ -127,6 +116,28 @@ public:
     }
 };
 
+auto FuntionCallMatcher = 
+    callExpr().bind("callExpression");
+
+class CallExprHandler : public MatchFinder::MatchCallback{
+private:
+    Rewriter& rewriter;
+
+public:
+    CallExprHandler(Rewriter& r) : rewriter(r) {}
+
+    virtual void run(const MatchFinder::MatchResult &result) {
+        if (const CallExpr *CE = result.Nodes.getNodeAs<clang::CallExpr>("callExpression")) {
+            std::string calleeFunctionName = rewriter.getRewrittenText(CE->getCallee()->getSourceRange());
+            if (calleeFunctionName == "get_global_id") {
+
+            } else if (calleeFunctionName == "get_local_id") {
+
+            } 
+        }
+    }
+};
+
 class KernelTranslatorComsumer : public ASTConsumer {
 private:
     MatchFinder matchFinderGlobalDataMatcher;
@@ -135,15 +146,20 @@ private:
     MatchFinder matchFinderFucntionDeclRewriter;
     FunctionDeclHandler functionDeclHandler;
 
+    MatchFinder matchFinderCallExprMatcher;
+    CallExprHandler callExprHandler;
+
 public:
-    KernelTranslatorComsumer(Rewriter& r) : functionDeclHandler(r), varDeclHandler(r) {
+    KernelTranslatorComsumer(Rewriter& r) : functionDeclHandler(r), varDeclHandler(r), callExprHandler(r) {
         matchFinderGlobalDataMatcher.addMatcher(VarDeclMatcher, &varDeclHandler);
         matchFinderFucntionDeclRewriter.addMatcher(FunctionDeclMathcer ,&functionDeclHandler);
+        matchFinderCallExprMatcher.addMatcher(FuntionCallMatcher, &callExprHandler);
     }
 
     void HandleTranslationUnit(ASTContext& context) override {
         matchFinderGlobalDataMatcher.matchAST(context);
         matchFinderFucntionDeclRewriter.matchAST(context);
+        matchFinderCallExprMatcher.matchAST(context);
     }
 
 };
