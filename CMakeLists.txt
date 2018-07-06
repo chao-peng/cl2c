@@ -12,7 +12,7 @@ add_clang_executable(cl2c
     src/UserConfig.h
     src/Main.cpp)
         
-target_link_libraries(cl2c
+target_link_libraries(cl2c PRIVATE
     clangAST
     clangASTMatchers
     clangBasic
